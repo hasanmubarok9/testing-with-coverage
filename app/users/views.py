@@ -16,7 +16,8 @@ def add_claims_to_access_token(identity):
     user = UserModel.query.get(identity)
 
     return {
-        "role": user.role
+        "role": user.role,
+        "id": user.id
     }
 
 class Register(Resource):
@@ -91,6 +92,7 @@ class GetEditDelete(BaseCrud, Resource):
     def __init__(self):
         super(GetEditDelete, self).__init__(UserModel)
 
+    @admin_required
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username', location='json', required=True)
@@ -106,6 +108,7 @@ class GetEditDelete(BaseCrud, Resource):
 
         return marshal(user, UserModel.response_fields), 200, {'Content-Type': 'application/json'}
 
+    @admin_required
     def put(self, id=None):
         parser = reqparse.RequestParser()
         parser.add_argument('username', location='json', required=True)

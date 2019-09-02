@@ -8,18 +8,21 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     product_type_id = db.Column(db.Integer, db.ForeignKey('product_type.id'))
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
     response_fields = {
         'id': fields.Integer,
         'name': fields.String,
-        'product_type_id': fields.Integer
+        'product_type_id': fields.Integer,
+        'created_by': fields.Integer
     }
 
-    def __init__(self, name, product_type_id):
+    def __init__(self, name, product_type_id, created_by):
         self.name = name
         self.product_type_id = product_type_id
+        self.created_by = created_by
 
     def __repr__(self):
         return '<Product %r>' % self.id

@@ -2,12 +2,15 @@ from flask_restful import Resource, marshal, reqparse
 from app import db, app
 from .model import ProductType as ProductTypeModel
 from app.baseview import BaseCrud, BaseViewList
+from flask_jwt_extended import jwt_required, get_jwt_claims
+from app.util import admin_required
 
 class GetEditDelete(BaseCrud, Resource):
 
     def __init__(self):
         super(GetEditDelete).__init__(ProductTypeModel)
 
+    @admin_required
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name', location='json', required=True)
@@ -21,6 +24,7 @@ class GetEditDelete(BaseCrud, Resource):
 
         return marshal(user, ProductTypeModel.response_fields), 200, {'Content-Type': 'application/json'}
 
+    @admin_required
     def put(self, id=None):
         parser = reqparse.RequestParser()
         parser.add_argument('name', location='json', required=True)
