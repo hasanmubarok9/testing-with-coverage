@@ -1,14 +1,23 @@
 from flask_restful import Resource, Api, reqparse, marshal, inputs
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from app import db, app
 from datetime import timedelta
 from .model import Users as UserModel
 from app.baseview import BaseCrud, BaseViewList
-import json
+from app.util import admin_required
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+
+    user = UserModel.query.get(identity)
+
+    return {
+        "role": user.role
+    }
 
 class Register(Resource):
 

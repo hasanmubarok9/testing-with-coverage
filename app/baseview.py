@@ -1,6 +1,7 @@
 from flask_restful import Resource, Api, reqparse, marshal, inputs, request
 from sqlalchemy import desc
 from . import db, app
+from util import admin_required
 
 api = Api(app)
 
@@ -26,6 +27,7 @@ class BaseView(Resource):
 
 class BaseCrud(BaseView, Resource):
 
+    @admin_required
     def get(self, id=None):
         if id is not None:
             qry = self.model.query.get(id)
@@ -35,12 +37,15 @@ class BaseCrud(BaseView, Resource):
         else:
             return {'status': 'id Please'}, 400, {'Content-Type': 'application/json'}
 
+    @admin_required
     def post(self):
         pass
 
+    @admin_required
     def put(self, id=None):
         pass
 
+    @admin_required
     def delete(self, id):
         qry = self.model.query.get(id)
         if qry is None:
@@ -52,6 +57,8 @@ class BaseCrud(BaseView, Resource):
         return {'status': 'User Deleted'}, 200, {'Content-Type': 'application/json'}
 
 class BaseViewList(BaseView):
+
+    @admin_required
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
