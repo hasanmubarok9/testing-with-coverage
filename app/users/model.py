@@ -21,7 +21,7 @@ class Users(db.Model):
         'address': fields.String
     }
 
-    def __init__(self, username, password, phonenumber, address, role="ordinary"):
+    def __init__(self, username, password, phonenumber, address, role="user"):
         self.username = username
         self.phonenumber = phonenumber
         self.address = address
