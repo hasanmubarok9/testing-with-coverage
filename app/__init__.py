@@ -2,13 +2,23 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+import os
+import config
 
 app = Flask(__name__)
+
+
+try:
+    env = os.environ.get('FLASK_ENV', 'development')
+    if env == 'testing':
+        app.config.from_object(config.TestingConfig)
+
+except Exception as e:
+    raise e
 
 # Setup database
 app.config['APP_DEBUG'] = True
 app.config['JWT_SECRET_KEY'] = 'hasansecret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/testing_coverage' # localhost aka 127.0.0.1
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

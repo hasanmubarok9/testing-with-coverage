@@ -1,8 +1,10 @@
 import json
 import pytest
-from . import client
+from tests import client, reset_database
 
 class TestUser():
+
+    reset_database()
 
     def test_create_user(self, client):
         data = {
