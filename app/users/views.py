@@ -146,12 +146,14 @@ class GetEditDelete(BaseCrud, Resource):
         parser.add_argument('phonenumber', type=str, location='json', required=True, help='phonenumber must be string and exist')
         args = parser.parse_args()
 
+        pw_hash = bcrypt.generate_password_hash(args['password'])
+
         qry = UserModel.query.get(id)
         if qry is None:
             return {'status': 'User Not Found'}, 404, {'Content-Type': 'application/json'}
 
         setattr(qry, 'username', args['username'])
-        setattr(qry, 'password', args['username'])
+        setattr(qry, 'password', pw_hash)
         setattr(qry, 'phonenumber', args['phonenumber'])
         setattr(qry, 'address', args['address'])
         if 'role' in args:
