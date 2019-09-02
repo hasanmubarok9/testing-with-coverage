@@ -1,7 +1,7 @@
 from flask_restful import Resource, Api, reqparse, marshal, inputs, request
 from sqlalchemy import desc
 from . import db, app
-from util import admin_required
+from .util import admin_required
 
 api = Api(app)
 
