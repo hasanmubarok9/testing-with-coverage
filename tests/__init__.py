@@ -1,6 +1,6 @@
 import pytest
 from flask import Flask, request, json
-from app import app
+from app import app, cache
 
 def call_client(request):
     client = app.test_client()
@@ -9,3 +9,30 @@ def call_client(request):
 @pytest.fixture
 def client(request):
     return call_client(request)
+
+def admin_required():
+    token = cache.get('token-admin')
+    if token is None:
+        data = {
+            'username': 'tria-admin',
+            'password': 'triapass'
+        }
+
+        req = call_client(request)
+        res = req.post(
+            '/login',
+            data=data,
+            content_type='application/json'
+            )
+
+        res_json = json.loads(res.data)
+
+        logging.warning('RESULT : %s', res_json)
+
+        assert res.status_code == 200
+
+        cache.set('token-admin', res_json['token'], timeout=60)
+
+        return res_json['token']
+    else:
+        return token

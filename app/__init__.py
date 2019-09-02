@@ -2,8 +2,11 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+from werkzeug.contrib.cache import SimpleCache
 
 app = Flask(__name__)
+
+cache = SimpleCache()
 
 # Setup database
 app.config['APP_DEBUG'] = True
