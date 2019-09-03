@@ -85,3 +85,12 @@ class TestUser():
         )
 
         assert res.status_code == 200
+
+        res = client.delete(
+            '/user/' + str(id_user_test),
+            data=json.dumps(data),
+            headers={'Authorization': 'Bearer ' + token_admin},
+            content_type='application/json'
+        )
+
+        assert res.status_code == 200
