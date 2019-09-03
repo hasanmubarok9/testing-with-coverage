@@ -2,9 +2,20 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+import os
+import config
 from werkzeug.contrib.cache import SimpleCache
 
 app = Flask(__name__)
+
+
+try:
+    env = os.environ.get('FLASK_ENV', 'development')
+    if env == 'testing':
+        app.config.from_object(config.TestingConfig)
+
+except Exception as e:
+    raise e
 
 cache = SimpleCache()
 

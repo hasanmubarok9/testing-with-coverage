@@ -1,12 +1,52 @@
 import json
 import pytest
-from . import client, admin_required
+from . import client, admin_required, reset_database
 
 class TestUser():
 
+    reset_database()
+
     def test_product_type(self, client):
+        # test register admin
+
+        data = {
+            "username": "admin",
+            "password": "admin",
+            "phonenumber": "0987635343",
+            "address": "Bimasakti",
+            "role": "admin"
+        }
+
+        res = client.post(
+            '/user/register',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
+        res_json = json.loads(res.data)
+        assert res.status_code == 200
+        assert res_json['data']['username'] == 'admin'
+
+        data = {
+            "username": "admin",
+            "password": "admin"
+        }
+
+        # test login admin
+
+        res = client.post(
+            '/user/login',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
+        res_json = json.loads(res.data)
+
+        assert res.status_code == 200
+        assert res_json['token'] is not None
+        token = res.json['token']
+
         # add
-        token = admin_required()
         data = {
             "name":"makanan"
         }
@@ -50,4 +90,6 @@ class TestUser():
             content_type='application/json'
         )
 
+        res_json = json.loads(res.data)
         assert res.status_code == 200
+        assert res_json[0]['name'] == 'food'

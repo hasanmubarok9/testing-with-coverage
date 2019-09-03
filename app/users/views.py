@@ -95,34 +95,74 @@ class GetEditDelete(BaseCrud, Resource):
     @admin_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', location='json', required=True)
-        parser.add_argument('phonenumber', location='json')
-        parser.add_argument('address', location='json', required=True)
-        data = parser.parse_args()
+        parser.add_argument('username', type=str, location='json', required=True,
+                            help='username must be string, unique, exist')
+        parser.add_argument('password', type=str, location='json', required=True,
+                            help='password must be string and exist')
+        parser.add_argument('role', type=str, location='json', required=False, help='password must be string and exist')
+        parser.add_argument('address', type=str, location='json', required=True,
+                            help='address must be string and exist')
+        parser.add_argument('phonenumber', type=str, location='json', required=True,
+                            help='phonenumber must be string and exist')
 
-        user = UserModel(data['username'], data['phonenumber'], data['address'])
+        args = parser.parse_args()
+
+        pw_hash = bcrypt.generate_password_hash(args['password'])
+
+        if args['role'] == "admin":
+            role = "admin"
+        else:
+            role = "user"
+
+        # validate unique username
+        all_data = UserModel.query.all()
+
+        existing_username = [item.username for item in all_data]
+
+        if args['username'] in existing_username:
+            return {'Status': 'User already exist'}, 422
+
+        user = UserModel(
+            username=args['username'],
+            password=pw_hash,
+            phonenumber=args['phonenumber'],
+            address=args['address'],
+            role=role
+        )
+
         db.session.add(user)
         db.session.commit()
+        db.session.refresh(user)
 
-        app.logger.debug('DEBUG : %s', user)
-
-        return marshal(user, UserModel.response_fields), 200, {'Content-Type': 'application/json'}
+        return {"data": marshal(user, UserModel.response_fields), "message": "User succesfully created"}, 200
 
     @admin_required
     def put(self, id=None):
         parser = reqparse.RequestParser()
-        parser.add_argument('username', location='json', required=True)
-        parser.add_argument('phonenumber', location='json', required=True)
-        parser.add_argument('address', location='json', required=True)
+        parser.add_argument('username', type=str, location='json', required=True, help='username must be string, unique, exist')
+        parser.add_argument('password', type=str, location='json', required=True, help='password must be string and exist')
+        parser.add_argument('role', type=str, location='json', required=False, help='role must be string and exist')
+        parser.add_argument('address', type=str, location='json', required=True, help='address must be string and exist')
+        parser.add_argument('phonenumber', type=str, location='json', required=True, help='phonenumber must be string and exist')
         args = parser.parse_args()
+
+        pw_hash = bcrypt.generate_password_hash(args['password'])
 
         qry = UserModel.query.get(id)
         if qry is None:
             return {'status': 'User Not Found'}, 404, {'Content-Type': 'application/json'}
 
         setattr(qry, 'username', args['username'])
+        setattr(qry, 'password', pw_hash)
         setattr(qry, 'phonenumber', args['phonenumber'])
         setattr(qry, 'address', args['address'])
+        if 'role' in args:
+            if args['role'] is not None:
+                setattr(qry, 'role', args['role'])
+            else:
+                setattr(qry, 'role', 'user')
+        else:
+            setattr(qry, 'role', 'user')
 
         db.session.commit()
 
