@@ -22,7 +22,6 @@ cache = SimpleCache()
 # Setup database
 app.config['APP_DEBUG'] = True
 app.config['JWT_SECRET_KEY'] = 'hasansecret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/testing_coverage' # localhost aka 127.0.0.1
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 

@@ -115,12 +115,9 @@ class GetEditDelete(BaseCrud, Resource):
             role = "user"
 
         # validate unique username
-        all_data = UserModel.query.all()
-
-        existing_username = [item.username for item in all_data]
-
-        if args['username'] in existing_username:
+        if UserModel.is_exists(args['username']):
             return {'Status': 'User already exist'}, 422
+
 
         user = UserModel(
             username=args['username'],

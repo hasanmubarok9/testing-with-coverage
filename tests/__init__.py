@@ -14,6 +14,7 @@ def client(request):
 
 def reset_database():
 
+    cek_var_db = db
     db.drop_all()
     db.create_all()
 

@@ -1,6 +1,6 @@
 import json
 import pytest
-from . import client, admin_required, reset_database
+from tests import client, admin_required, reset_database
 
 class TestUser():
 
