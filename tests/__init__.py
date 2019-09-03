@@ -20,14 +20,14 @@ def admin_required():
 
         req = call_client(request)
         res = req.post(
-            '/login',
-            data=data,
+            '/user/login',
+            data=json.dumps(data),
             content_type='application/json'
             )
 
         res_json = json.loads(res.data)
 
-        logging.warning('RESULT : %s', res_json)
+        # logging.warning('RESULT : %s', res_json)
 
         assert res.status_code == 200
 

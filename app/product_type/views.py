@@ -16,13 +16,13 @@ class GetEditDelete(BaseCrud, Resource):
         parser.add_argument('name', location='json', required=True)
         data = parser.parse_args()
 
-        user = ProductTypeModel(data['name'])
-        db.session.add(user)
+        product_type = ProductTypeModel(data['name'])
+        db.session.add(product_type)
         db.session.commit()
 
-        app.logger.debug('DEBUG : %s', user)
+        app.logger.debug('DEBUG : %s', product_type)
 
-        return marshal(user, ProductTypeModel.response_fields), 200, {'Content-Type': 'application/json'}
+        return marshal(product_type, ProductTypeModel.response_fields), 200, {'Content-Type': 'application/json'}
 
     @admin_required
     def put(self, id=None):
@@ -36,6 +36,8 @@ class GetEditDelete(BaseCrud, Resource):
         setattr(qry, 'name', args['name'])
 
         db.session.commit()
+
+        return marshal(qry, ProductTypeModel.response_fields), 200, {'Content-Type': 'application/json'}
 
 class ViewList(BaseViewList, Resource):
 
