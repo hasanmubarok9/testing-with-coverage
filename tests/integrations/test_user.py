@@ -88,6 +88,26 @@ class TestUser():
         assert res.status_code == 200
         id_user_test = res_json['data']['id']
 
+        # test create user failed (user already exist)
+
+        data = {
+            "username": "Kobar",
+            "password": "kodingbareng",
+            "phonenumber": "987645343",
+            "address": "Jember"
+        }
+
+        res = client.post(
+            '/user/',
+            data=json.dumps(data),
+            headers={'Authorization': 'Bearer ' + token_admin},
+            content_type='application/json'
+        )
+
+        res_json = json.loads(res.data)
+
+        assert res.status_code == 422
+
         # test update user by admin
 
         data = {
