@@ -6,26 +6,26 @@ from app.baseview import BaseCrud, BaseViewList
 
 class GetEditDelete(BaseCrud, Resource):
 
-    @jwt_required
     def __init__(self):
-        super(GetEditDelete).__init__(ProductModel)
+        super(GetEditDelete, self).__init__(ProductModel)
 
     @jwt_required
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('name', location='json', required=True)
         parser.add_argument('product_type_id', location='json', required=True)
+        parser.add_argument('created_by', location='json', required=True)
         data = parser.parse_args()
 
         claims = get_jwt_claims()
 
-        user = ProductModel(data['name'], data['product_type_id'])
-        db.session.add(user)
+        product = ProductModel(data['name'], data['product_type_id'], data['created_by'])
+        db.session.add(product)
         db.session.commit()
 
-        app.logger.debug('DEBUG : %s', user)
+        app.logger.debug('DEBUG : %s', product)
 
-        return marshal(user, ProductModel.response_fields), 200, {'Content-Type': 'application/json'}
+        return marshal(product, ProductModel.response_fields), 200, {'Content-Type': 'application/json'}
 
     @jwt_required
     def put(self, id=None):

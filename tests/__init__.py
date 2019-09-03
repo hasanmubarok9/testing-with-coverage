@@ -2,6 +2,8 @@ import pytest
 
 from flask import Flask, request, json
 from app import app, db, cache
+from app.users.model import Users as UserModel
+from app.users.views import bcrypt
 
 def call_client(request):
     client = app.test_client()
@@ -14,16 +16,23 @@ def client(request):
 
 def reset_database():
 
-    cek_var_db = db
     db.drop_all()
     db.create_all()
 
+    admin = UserModel("admin-tria", bcrypt.generate_password_hash("triapass"), "0986463", "Balikpapan", "admin")
 
-def admin_required():
+    # create test non-admin user
+
+    # save users to database
+    db.session.add(admin)
+    db.session.commit()
+
+
+def get_token_admin():
     token = cache.get('token-admin')
     if token is None:
         data = {
-            'username': 'tria-admin',
+            'username': 'admin-tria',
             'password': 'triapass'
         }
 
