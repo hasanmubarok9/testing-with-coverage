@@ -28,12 +28,17 @@ class TestUser():
         assert res.status_code == 200
         assert res_json['data']['username'] == 'admin'
 
+        ################
+        #test login admin
+        ################
+
+        # 1 success
+
         data = {
             "username": "admin",
             "password": "admin"
         }
 
-        #test login admin
 
         res = client.post(
             '/user/login',
@@ -46,6 +51,21 @@ class TestUser():
         assert res.status_code == 200
         assert res_json['token'] is not None
         token_admin = res.json['token']
+
+        # 2 failed wrong password
+
+        data = {
+            "username": "admin",
+            "password": "wrongpassword"
+        }
+
+        res = client.post(
+            '/user/login',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
+        assert res.status_code == 422
 
         # test create user by admin
 
@@ -85,6 +105,34 @@ class TestUser():
         )
 
         assert res.status_code == 200
+
+        ################
+        # test get user
+        ################
+
+        # 1 failed, id is empty
+
+        res = client.get(
+            '/user/',
+            data=json.dumps(data),
+            headers={'Authorization': 'Bearer ' + token_admin},
+            content_type='application/json'
+        )
+
+        assert res.status_code == 400
+
+        # 2 success
+
+        res = client.get(
+            '/user/' + str(id_user_test),
+            data=json.dumps(data),
+            headers={'Authorization': 'Bearer ' + token_admin},
+            content_type='application/json'
+        )
+
+        assert res.status_code == 200
+
+        #test delete user
 
         res = client.delete(
             '/user/' + str(id_user_test),
