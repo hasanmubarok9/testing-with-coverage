@@ -7,13 +7,13 @@ class TestUser():
     reset_database()
 
     def test_product_type(self, client):
-        # test register admin
 
+        # test register admin
         data = {
-            "username": "admin",
-            "password": "admin",
-            "phonenumber": "0987635343",
-            "address": "Bimasakti",
+            "username": "admin-trya",
+            "password": "tryapass",
+            "phonenumber": "0123456789",
+            "address": "Malang",
             "role": "admin"
         }
 
@@ -25,11 +25,11 @@ class TestUser():
 
         res_json = json.loads(res.data)
         assert res.status_code == 200
-        assert res_json['data']['username'] == 'admin'
+        assert res_json['data']['username'] == 'admin-trya'
 
         data = {
-            "username": "admin",
-            "password": "admin"
+            "username": "admin-trya",
+            "password": "tryapass"
         }
 
         # test login admin
