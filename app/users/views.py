@@ -20,6 +20,10 @@ def add_claims_to_access_token(identity):
         "id": user.id
     }
 
+def make_password_hash(password):
+    password_hash = bcrypt.generate_password_hash(password)
+    return password_hash
+
 class Register(Resource):
 
     def post(self):
@@ -32,7 +36,8 @@ class Register(Resource):
 
         args = parser.parse_args()
 
-        pw_hash = bcrypt.generate_password_hash(args['password'])
+        # pw_hash = bcrypt.generate_password_hash(args['password'])
+        pw_hash = make_password_hash(args['password'])
 
         if args['role'] == "admin":
             role = "admin"
