@@ -13,6 +13,8 @@ try:
     env = os.environ.get('FLASK_ENV', 'development')
     if env == 'testing':
         app.config.from_object(config.TestingConfig)
+    else:
+        app.config.from_object(config.DevelopmentConfig)
 
 except Exception as e:
     raise e
